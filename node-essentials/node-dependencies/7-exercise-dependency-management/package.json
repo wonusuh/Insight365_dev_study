@@ -1,6 +1,7 @@
 {
-  "name": "nodejspractice",
+  "name": "7-exercise-dependency-management",
   "version": "1.0.0",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -8,9 +9,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
+    "lodash": "4.17.20",
     "node-fetch": "^3.3.2"
-  },
-  "type": "module"
+  }
 }
