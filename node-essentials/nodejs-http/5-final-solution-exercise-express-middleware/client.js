@@ -5,7 +5,7 @@ const options = {
   hostname: 'localhost',
   path: '/users',
   headers: {
-    authorization: 'secretpassword'
+    // authorization: 'secretpassword'
   },
 };
 
