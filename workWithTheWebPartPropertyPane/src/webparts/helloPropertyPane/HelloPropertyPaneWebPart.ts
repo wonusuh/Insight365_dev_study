@@ -160,10 +160,8 @@ export default class HelloPropertyPaneWebPart extends BaseClientSideWebPart<IHel
       : '';
   }
 
-  // /* eslint-disable @typescript-eslint/no-explicit-any */
   // private onContinentSelectionChange(propertyPath: string, newValue: any): void {
   //   update(this.properties, propertyPath, (): any => { return newValue });
   //   this.render();
   // }
-  // /* eslint-enable @typescript-eslint/no-explicit-any */
 }
