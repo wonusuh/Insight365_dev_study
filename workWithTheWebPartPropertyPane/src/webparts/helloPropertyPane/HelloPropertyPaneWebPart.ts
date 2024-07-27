@@ -7,15 +7,15 @@ import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import type { IReadonlyTheme } from '@microsoft/sp-component-base';
 import {
   escape
-  // , update 
+  , update
 } from '@microsoft/sp-lodash-subset';
 
 import styles from './HelloPropertyPaneWebPart.module.scss';
 import * as strings from 'HelloPropertyPaneWebPartStrings';
-// import {
-//   PropertyPaneContinentSelector,
-//   IPropertyPaneContinentSelectorProps
-// } from '../../controls/PropertyPaneContinentSelector';
+import {
+  PropertyPaneContinentSelector,
+  IPropertyPaneContinentSelectorProps
+} from '../../controls/PropertyPaneContinentSelector';
 
 export interface IHelloPropertyPaneWebPartProps {
   description: string;
@@ -129,16 +129,16 @@ export default class HelloPropertyPaneWebPart extends BaseClientSideWebPart<IHel
                 PropertyPaneTextField('description', {
                   label: strings.DescriptionFieldLabel
                 }),
-                PropertyPaneTextField('myContinent', {
-                  label: 'Continent where I currently reside',
-                  onGetErrorMessage: this.validateContinents.bind(this),
-                }),
-                // new PropertyPaneContinentSelector('myContinent', <IPropertyPaneContinentSelectorProps>{
+                // PropertyPaneTextField('myContinent', {
                 //   label: 'Continent where I currently reside',
-                //   disabled: false,
-                //   selectedKey: this.properties.myContinent,
-                //   onPropertyChange: this.onContinentSelectionChange.bind(this),
+                //   onGetErrorMessage: this.validateContinents.bind(this),
                 // }),
+                new PropertyPaneContinentSelector('myContinent', <IPropertyPaneContinentSelectorProps>{
+                  label: 'Continent where I currently reside',
+                  disabled: false,
+                  selectedKey: this.properties.myContinent,
+                  onPropertyChange: this.onContinentSelectionChange.bind(this),
+                }),
                 PropertyPaneSlider('numContinentsVisited', {
                   label: 'Number of continents I\'ve visited',
                   min: 1, max: 7, showValue: true,
@@ -151,17 +151,19 @@ export default class HelloPropertyPaneWebPart extends BaseClientSideWebPart<IHel
     };
   }
 
-  private validateContinents(textboxValue: string): string {
-    const validContinentOptions: string[] = ['africa', 'antarctica', 'asia', 'australia', 'europe', 'north america', 'south america'];
-    const inputToValidate: string = textboxValue.toLowerCase();
+  // private validateContinents(textboxValue: string): string {
+  //   const validContinentOptions: string[] = ['africa', 'antarctica', 'asia', 'australia', 'europe', 'north america', 'south america'];
+  //   const inputToValidate: string = textboxValue.toLowerCase();
 
-    return (validContinentOptions.indexOf(inputToValidate) === -1)
-      ? 'Invalid continent entry; valid options are "Africa", "Antarctica", "Asia", "Australia", "Europe", "North America", and "South America"'
-      : '';
-  }
-
-  // private onContinentSelectionChange(propertyPath: string, newValue: any): void {
-  //   update(this.properties, propertyPath, (): any => { return newValue });
-  //   this.render();
+  //   return (validContinentOptions.indexOf(inputToValidate) === -1)
+  //     ? 'Invalid continent entry; valid options are "Africa", "Antarctica", "Asia", "Australia", "Europe", "North America", and "South America"'
+  //     : '';
   // }
+
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  private onContinentSelectionChange(propertyPath: string, newValue: any): void {
+    update(this.properties, propertyPath, (): any => { return newValue });
+    this.render();
+  }
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 }
