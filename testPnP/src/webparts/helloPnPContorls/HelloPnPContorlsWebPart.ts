@@ -7,26 +7,21 @@ import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import type { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { escape } from '@microsoft/sp-lodash-subset';
 
-import styles from './HelloPnPControlsWebPart.module.scss';
-import * as strings from 'HelloPnPControlsWebPartStrings';
-import {
-  IPropertyFieldGroupOrPerson,
-  PropertyFieldPeoplePicker,
-  PrincipalType
-} from '@pnp/spfx-property-controls/lib/PropertyFieldPeoplePicker';
+import styles from './HelloPnPContorlsWebPart.module.scss';
+import * as strings from 'HelloPnPContorlsWebPartStrings';
 
-export interface IHelloPnPControlsWebPartProps {
+export interface IHelloPnPContorlsWebPartProps {
   description: string;
 }
 
-export default class HelloPnPControlsWebPart extends BaseClientSideWebPart<IHelloPnPControlsWebPartProps> {
+export default class HelloPnPContorlsWebPart extends BaseClientSideWebPart<IHelloPnPContorlsWebPartProps> {
 
   private _isDarkTheme: boolean = false;
   private _environmentMessage: string = '';
 
   public render(): void {
     this.domElement.innerHTML = `
-    <section class="${styles.helloPnPControls} ${!!this.context.sdks.microsoftTeams ? styles.teams : ''}">
+    <section class="${styles.helloPnPContorls} ${!!this.context.sdks.microsoftTeams ? styles.teams : ''}">
       <div class="${styles.welcome}">
         <img alt="" src="${this._isDarkTheme ? require('./assets/welcome-dark.png') : require('./assets/welcome-light.png')}" class="${styles.welcomeImage}" />
         <h2>Well done, ${escape(this.context.pageContext.user.displayName)}!</h2>
@@ -57,6 +52,8 @@ export default class HelloPnPControlsWebPart extends BaseClientSideWebPart<IHell
       this._environmentMessage = message;
     });
   }
+
+
 
   private _getEnvironmentMessage(): Promise<string> {
     if (!!this.context.sdks.microsoftTeams) { // running in Teams, office.com or Outlook
