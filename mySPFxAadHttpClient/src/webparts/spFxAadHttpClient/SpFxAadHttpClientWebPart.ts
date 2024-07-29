@@ -11,6 +11,11 @@ import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import * as strings from 'SpFxAadHttpClientWebPartStrings';
 import SpFxAadHttpClient from './components/SpFxAadHttpClient';
 import { ISpFxAadHttpClientProps } from './components/ISpFxAadHttpClientProps';
+import { IUserItem } from '../../models/IUserItem';
+import {
+  AadHttpClient,
+  HttpClientResponse
+} from '@microsoft/sp-http';
 
 export interface ISpFxAadHttpClientWebPartProps {
   description: string;
@@ -21,19 +26,31 @@ export default class SpFxAadHttpClientWebPart extends BaseClientSideWebPart<ISpF
   private _isDarkTheme: boolean = false;
   private _environmentMessage: string = '';
 
-  public render(): void {
-    const element: React.ReactElement<ISpFxAadHttpClientProps> = React.createElement(
-      SpFxAadHttpClient,
-      {
-        description: this.properties.description,
-        isDarkTheme: this._isDarkTheme,
-        environmentMessage: this._environmentMessage,
-        hasTeamsContext: !!this.context.sdks.microsoftTeams,
-        userDisplayName: this.context.pageContext.user.displayName
-      }
-    );
+  protected get isRenderAsync(): boolean {
+    return true;
+  }
+  public async render(): Promise<void> {
+    if (!this.renderedOnce) {
+      const results: IUserItem[] = await this._getUsers();
 
-    ReactDom.render(element, this.domElement);
+      const element: React.ReactElement<ISpFxAadHttpClientProps> = React.createElement(
+        SpFxAadHttpClient,
+        {
+          userItems: results,
+          isDarkTheme: this._isDarkTheme,
+          environmentMessage: this._environmentMessage,
+          hasTeamsContext: !!this.context.sdks.microsoftTeams,
+          userDisplayName: this.context.pageContext.user.displayName
+        }
+      );
+
+      ReactDom.render(element, this.domElement);
+    }
+
+    this.renderCompleted();
+  }
+  protected renderCompleted(): void {
+    super.renderCompleted();
   }
 
   protected onInit(): Promise<void> {
@@ -41,8 +58,6 @@ export default class SpFxAadHttpClientWebPart extends BaseClientSideWebPart<ISpF
       this._environmentMessage = message;
     });
   }
-
-
 
   private _getEnvironmentMessage(): Promise<string> {
     if (!!this.context.sdks.microsoftTeams) { // running in Teams, office.com or Outlook
@@ -117,5 +132,21 @@ export default class SpFxAadHttpClientWebPart extends BaseClientSideWebPart<ISpF
         }
       ]
     };
+  }
+
+  private async _getUsers(): Promise<IUserItem[]> {
+    const aadClient: AadHttpClient = await this.context.aadHttpClientFactory
+      .getClient('https://graph.microsoft.com');
+
+    const endpoint: string = 'https://graph.microsoft.com/v1.0/users?$top=10&$select=id,displayName,mail';
+    const response: HttpClientResponse = await aadClient.get(endpoint, AadHttpClient.configurations.v1);
+
+    if (!response.ok) {
+      const responseText = await response.text();
+      throw new Error(responseText);
+    }
+
+    const responseJson = await response.json();
+    return responseJson.value as IUserItem[];
   }
 }
