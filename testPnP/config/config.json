@@ -1,0 +1,19 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "hello-pn-p-contorls-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/helloPnPContorls/HelloPnPContorlsWebPart.js",
+          "manifest": "./src/webparts/helloPnPContorls/HelloPnPContorlsWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "HelloPnPContorlsWebPartStrings": "lib/webparts/helloPnPContorls/loc/{locale}.js",
+    "PropertyControlStrings": "node_modules/@pnp/spfx-property-controls/lib/loc/{locale}.js"
+  }
+}
