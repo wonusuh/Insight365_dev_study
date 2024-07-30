@@ -13,7 +13,7 @@ import {
   PersonaSize
 } from '@fluentui/react/lib/Persona';
 
-import { Link } from '@fluentui/react/lib/components/Link';
+import { Link } from '@fluentui/react';
 
 export default class GraphPersona extends React.Component<IGraphPersonaProps, IGraphPersonaState> {
   constructor(props: IGraphPersonaProps) {
@@ -23,7 +23,7 @@ export default class GraphPersona extends React.Component<IGraphPersonaProps, IG
       name: '',
       email: '',
       phone: '',
-      image: '',
+      image: undefined,
     };
   }
 
