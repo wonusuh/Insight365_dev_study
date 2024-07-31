@@ -60,6 +60,7 @@ export default class GraphPersona extends React.Component<IGraphPersonaProps, IG
     this.props.graphClient
       .api('me')
       .get((error: GraphError, user: MicrosoftGraph.User) => {
+        7
         this.setState({
           name: user.displayName || ``,
           email: user.mail || "",
