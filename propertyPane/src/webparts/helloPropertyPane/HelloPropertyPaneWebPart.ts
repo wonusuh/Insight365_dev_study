@@ -1,47 +1,31 @@
-import {
-  Version,
-  DisplayMode,
-  Environment,
-  EnvironmentType,
-  Log,
-} from "@microsoft/sp-core-library";
+import { Version } from "@microsoft/sp-core-library";
 import {
   type IPropertyPaneConfiguration,
   PropertyPaneTextField,
+  PropertyPaneSlider,
 } from "@microsoft/sp-property-pane";
 import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
 import type { IReadonlyTheme } from "@microsoft/sp-component-base";
 import { escape } from "@microsoft/sp-lodash-subset";
-import styles from "./HelloWorldWebPart.module.scss";
-import * as strings from "HelloWorldWebPartStrings";
 
-export interface IHelloWorldWebPartProps {
+import styles from "./HelloPropertyPaneWebPart.module.scss";
+import * as strings from "HelloPropertyPaneWebPartStrings";
+
+export interface IHelloPropertyPaneWebPartProps {
   description: string;
+  myContinent: string;
+  numContinentsVisited: number;
 }
-export default class HelloWorldWebPart extends BaseClientSideWebPart<IHelloWorldWebPartProps> {
+
+export default class HelloPropertyPaneWebPart extends BaseClientSideWebPart<IHelloPropertyPaneWebPartProps> {
   private _isDarkTheme: boolean = false;
   private _environmentMessage: string = "";
 
   public render(): void {
-    const siteTitle: string = this.context.pageContext.web.title;
-    const pageMode: string =
-      this.displayMode === DisplayMode.Edit
-        ? `현재 편집모드 입니다`
-        : `현재 읽기모드 입니다`;
-    const environmentType: string =
-      Environment.type === EnvironmentType.ClassicSharePoint
-        ? "현재 클리식페이지 입니다"
-        : `현재 모던페이지 입니다`;
-
-    this.context.statusRenderer.displayLoadingIndicator(
-      this.domElement,
-      `message`
-    );
-    setTimeout(() => {
-      this.domElement.innerHTML = `
-    <section class="${styles.helloWorld} ${
-        !!this.context.sdks.microsoftTeams ? styles.teams : ""
-      }">
+    this.domElement.innerHTML = `
+    <section class="${styles.helloPropertyPane} ${
+      !!this.context.sdks.microsoftTeams ? styles.teams : ""
+    }">
       <div class="${styles.welcome}">
         <img alt="" src="${
           this._isDarkTheme
@@ -55,35 +39,30 @@ export default class HelloWorldWebPart extends BaseClientSideWebPart<IHelloWorld
         <div>Web part property value : <strong>${escape(
           this.properties.description
         )}</strong></div>
-        <div>Site title : <strong>${escape(siteTitle)}</strong></div>
-        <div>페이지 모드 : <strong>${escape(pageMode)}</strong></div>
-        <div>환경 : <strong>${escape(environmentType)}</strong></div>
+        <div>Continent where I reside : <strong>${escape(
+          this.properties.myContinent
+        )}</strong></div>
+        <div>Number of continents I've visited : <strong>${
+          this.properties.numContinentsVisited
+        }</strong></div>
       </div>
       <div>
         <h3>Welcome to SharePoint Framework!</h3>
         <p>
         The SharePoint Framework (SPFx) is a extensibility model for Microsoft Viva, Microsoft Teams and SharePoint. It's the easiest way to extend Microsoft 365 with automatic Single Sign On, automatic hosting and industry standard tooling.
         </p>
-        <button type="button">Show welcome message</button>
+        <h4>Learn more about SPFx development:</h4>
+          <ul class="${styles.links}">
+            <li><a href="https://aka.ms/spfx" target="_blank">SharePoint Framework Overview</a></li>
+            <li><a href="https://aka.ms/spfx-yeoman-graph" target="_blank">Use Microsoft Graph in your solution</a></li>
+            <li><a href="https://aka.ms/spfx-yeoman-teams" target="_blank">Build for Microsoft Teams using SharePoint Framework</a></li>
+            <li><a href="https://aka.ms/spfx-yeoman-viva" target="_blank">Build for Microsoft Viva Connections using SharePoint Framework</a></li>
+            <li><a href="https://aka.ms/spfx-yeoman-store" target="_blank">Publish SharePoint Framework applications to the marketplace</a></li>
+            <li><a href="https://aka.ms/spfx-yeoman-api" target="_blank">SharePoint Framework API reference</a></li>
+            <li><a href="https://aka.ms/m365pnp" target="_blank">Microsoft 365 Developer Community</a></li>
+          </ul>
       </div>
     </section>`;
-
-      this.domElement
-        .getElementsByTagName("button")[0]
-        .addEventListener(`click`, (event: MouseEvent) => {
-          event.preventDefault();
-          alert(`Welcome to the SharePoint Framework!`);
-        });
-    }, 5000);
-
-    Log.info(`HelloWorld`, `message`, this.context.serviceScope);
-    Log.warn(`HelloWorld`, `WARNING message`, this.context.serviceScope);
-    Log.error(
-      `HelloWorld`,
-      new Error(`Error message`),
-      this.context.serviceScope
-    );
-    Log.verbose(`HelloWorld`, `VERBOSE message`, this.context.serviceScope);
   }
 
   protected onInit(): Promise<void> {
@@ -170,11 +149,37 @@ export default class HelloWorldWebPart extends BaseClientSideWebPart<IHelloWorld
                 PropertyPaneTextField("description", {
                   label: strings.DescriptionFieldLabel,
                 }),
+                PropertyPaneTextField("myContinent", {
+                  label: `현재 내가 거주중인 대륙`,
+                  onGetErrorMessage: this.validateContinents.bind(this),
+                }),
+                PropertyPaneSlider("numContinentsVisited", {
+                  label: `내가 방문한 대륙들의 숫자`,
+                  min: 1,
+                  max: 7,
+                  showValue: true,
+                }),
               ],
             },
           ],
         },
       ],
     };
+  }
+
+  private validateContinents(input: string): string {
+    const validContinentOptions: string[] = [
+      "africa",
+      "antarctica",
+      "asia",
+      "australia",
+      "europe",
+      "north america",
+      "south america",
+    ];
+    const inputToValidate: string = input.toLowerCase();
+    return validContinentOptions.indexOf(inputToValidate) === -1
+      ? `존재하지 않는 대륙입니다.; valid options are "Africa", "Antarctica", "Asia", "Australia", "Europe", "North America", and "South America"`
+      : ``;
   }
 }
