@@ -13,7 +13,7 @@ import {
 } from "./";
 
 export class PropertyPaneContinentSelector
-  implements IPropertyPaneField<IPropertyPaneContinentSelectorInternalProps>
+  implements IPropertyPaneField<IPropertyPaneContinentSelectorProps>
 {
   public type: PropertyPaneFieldType = PropertyPaneFieldType.Custom;
   public properties: IPropertyPaneContinentSelectorInternalProps;
@@ -51,13 +51,13 @@ export class PropertyPaneContinentSelector
         onChanged: this.onChanged.bind(this),
         selectedKey: this.properties.selectedKey,
         disabled: this.properties.disabled,
-        stateKey: new Date().toString(),
+        stateKey: new Date().toString(), // hack to allow for externally triggered re-rendering
       });
     ReactDom.render(reactElement, element);
   }
 
-  private onDispose(elm: HTMLElement): void {
-    ReactDom.unmountComponentAtNode(elm);
+  private onDispose(element: HTMLElement): void {
+    ReactDom.unmountComponentAtNode(element);
   }
 
   private onChanged(option: IDropdownOption, index?: number): void {

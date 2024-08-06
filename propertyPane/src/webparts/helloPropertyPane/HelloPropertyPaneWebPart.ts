@@ -156,10 +156,10 @@ export default class HelloPropertyPaneWebPart extends BaseClientSideWebPart<IHel
                 //   label: `현재 내가 거주중인 대륙`,
                 //   onGetErrorMessage: this.validateContinents.bind(this),
                 // }),
-                new PropertyPaneContinentSelector(`myContinent`, <
+                new PropertyPaneContinentSelector("myContinent", <
                   IPropertyPaneContinentSelectorProps
                 >{
-                  label: `내가 현재 거주중인 대륙`,
+                  label: "Continent where I currently reside",
                   disabled: false,
                   selectedKey: this.properties.myContinent,
                   onPropertyChange: this.onContinentSelectionChange.bind(this),
